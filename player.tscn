@@ -21,6 +21,10 @@ texture = ExtResource( 2 )
 position = Vector2( -5, 0 )
 current = true
 zoom = Vector2( 0.75, 0.75 )
+limit_left = -500
+limit_top = -500
+limit_right = 500
+limit_bottom = 500
 
 [node name="weapon" type="Node2D" parent="player"]
 position = Vector2( 27.5, 0 )

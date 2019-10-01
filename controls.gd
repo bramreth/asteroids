@@ -3,31 +3,50 @@ extends Node2D
 var shot = preload("res://shot.tscn")
 var spin = 0
 var v = 0.0
+var acc = 0.1
 var velocity = Vector2(0, 0)
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+var speed = 200
+var max_v = 2.0
+var r_acc = 0.01
+var max_r = 0.15
+var drag = 0.9
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if Input.is_action_pressed("ui_left") and spin > -0.15:
-		spin -= 0.01
-	elif Input.is_action_pressed("ui_right") and spin < 0.15:
-		spin += 0.01
+	
+	# handle rotation
+	if Input.is_action_pressed("ui_left"):
+		rotate_left()
+	elif Input.is_action_pressed("ui_right"):
+		rotate_right()
 	else:
-		spin *= 0.9
+		spin *= drag
+		
 	$player.rotate(spin)
-	if Input.is_action_pressed("ui_up") and v < 2.0:
-		v += 0.1
+	
+	# handle thrust
+	if Input.is_action_pressed("ui_up"):
+		thrust()
 	else:
-		v *= 0.9
-	velocity = Vector2(v, 0).rotated($player.rotation) * 200.0
+		v *= drag
+	velocity = Vector2(v, 0).rotated($player.rotation) * speed
 	velocity = $player.move_and_slide(velocity)
 	
+	# handle shooting
 	if Input.is_action_just_pressed("ui_accept"):
 		fire_weapon()
+
+func thrust():
+	if v < max_v:
+		v += acc
+
+func rotate_left():
+	if abs(spin) < max_r:
+		spin -= r_acc
+		
+func rotate_right():
+	if abs(spin) < max_r:
+		spin += r_acc
 		
 func fire_weapon():
 	var instance = shot.instance()
@@ -40,4 +59,3 @@ func set_limit(left, top, bottom, right):
 	$player/Camera2D.limit_right = right
 	$player/Camera2D.limit_top = top
 	$player/Camera2D.limit_bottom = bottom
-	pass
