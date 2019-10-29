@@ -3,12 +3,12 @@ extends Node2D
 var shot = preload("res://shot.tscn")
 var spin = 0
 var v = 0.0
-var acc = 0.1
+var acc = 0.15
 var velocity = Vector2(0, 0)
 var speed = 200
-var max_v = 2.0
+var max_v = 5.0
 var r_acc = 0.01
-var max_r = 0.15
+var max_r = 0.2
 var drag = 0.9
 
 var cooldown = 0
@@ -40,41 +40,77 @@ func level_up():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	# handle rotation
-	if Input.is_action_pressed("ui_left"):
-		rotate_left()
-	elif Input.is_action_pressed("ui_right"):
-		rotate_right()
-	else:
-		spin *= drag
+	if Input.is_action_pressed("joy_down") or Input.is_action_pressed("joy_up") or Input.is_action_pressed("joy_left") or Input.is_action_pressed("joy_right"):
+		if not Input.is_action_pressed("brake"):
+			thrust()
+	spin *= drag
 		
 	$player.rotate(spin)
 	
+	
+		
 	# handle thrust
 	if Input.is_action_pressed("ui_up"):
 		thrust()
 	else:
 		v *= drag
 	velocity = Vector2(v, 0).rotated($player.rotation) * speed
+	interp_path()
 	velocity = $player.move_and_slide(velocity)
 	
 	# handle shooting
 	if game_manager.fire_rate:
-		if Input.is_action_pressed("ui_accept"):
+		if Input.is_action_pressed("shoot"):
 			fire_automatic()
-	elif Input.is_action_just_pressed("ui_accept"):
+	elif Input.is_action_just_pressed("shoot"):
 		fire_weapon()
+
+func interp_path():
+	var path = Vector2()
+	#https://www.gamedev.net/forums/topic/445890-clockwise-or-counterclockwise/
+	path.x = Input.get_action_strength("joy_right") - Input.get_action_strength("joy_left")
+	path.y = Input.get_action_strength("joy_down") - Input.get_action_strength("joy_up")
+	#path = path.normalized()
+	if path:
+#		$player.rotation = path.angle()
+#		if $player.rotation - path.angle() > 0:
+#			rotate_left()
+#		else:
+#			rotate_right()
+			
+		var direction = cos($player.rotation)*sin(path.angle()) - cos(path.angle())*sin($player.rotation);
+		print(direction)
+		if(direction > 0.0):
+			rotate_right(direction)
+		else:
+			rotate_left(direction)
+#		if $player.get_angle_to(path) > 0:
+#			rotate_left()
+#		if $player.get_angle_to(path) < 0:
+#			rotate_right()
+#		print($player.get_angle_to(path))
+#		print($player.rotation)
+#	if velocity != path:
+#		rotate_left()
+#		print(path, velocity)
+	
+#	print(path, velocity)
+#	print(velocity)
+#	velocity = $player.move_and_slide(path * 500)
+	
+
 
 func thrust():
 	if v < max_v:
 		v += acc
 
-func rotate_left():
+func rotate_left(mag):
 	if abs(spin) < max_r:
-		spin -= r_acc
+		spin -= r_acc*abs(mag)
 		
-func rotate_right():
+func rotate_right(mag):
 	if abs(spin) < max_r:
-		spin += r_acc
+		spin += r_acc*abs(mag)
 		
 func fire_weapon():
 	var instance = shot.instance()

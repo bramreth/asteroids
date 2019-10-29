@@ -26,7 +26,8 @@ func level_up():
 	
 func damage_player():
 	if shields < 1:
-		get_tree().quit()
+		pass
+#		get_tree().quit()
 	else:
 		shields -= 1
 		emit_signal("damage")
