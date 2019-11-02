@@ -22,7 +22,7 @@ texture = ExtResource( 2 )
 [node name="Camera2D" type="Camera2D" parent="player"]
 position = Vector2( -5, 0 )
 current = true
-zoom = Vector2( 0.75, 0.75 )
+zoom = Vector2( 0.25, 0.25 )
 limit_left = -500
 limit_top = -500
 limit_right = 500

@@ -1,0 +1,185 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://new_theme.tres" type="Theme" id=1]
+[ext_resource path="res://dialog.gd" type="Script" id=2]
+[ext_resource path="res://J.png" type="Texture" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 1.0
+content_margin_right = 1.0
+bg_color = Color( 0.0196078, 0.0784314, 0.196078, 0.784314 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0, 0, 0, 1 )
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+shadow_size = 1
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="VSplitContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="spacer" type="HBoxContainer" parent="VSplitContainer"]
+margin_right = 1920.0
+margin_bottom = 717.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="ReferenceRect" type="CenterContainer" parent="VSplitContainer/spacer"]
+margin_top = 117.0
+margin_right = 637.0
+margin_bottom = 717.0
+rect_min_size = Vector2( 120, 120 )
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="Panel" type="Panel" parent="VSplitContainer/spacer/ReferenceRect"]
+margin_left = 18.0
+margin_right = 618.0
+margin_bottom = 600.0
+rect_min_size = Vector2( 600, 600 )
+
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/spacer/ReferenceRect/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 5.0
+margin_right = -5.0
+margin_bottom = -5.0
+
+[node name="character_img" type="TextureRect" parent="VSplitContainer/spacer/ReferenceRect/Panel/MarginContainer"]
+margin_right = 590.0
+margin_bottom = 590.0
+rect_min_size = Vector2( 100, 100 )
+texture = ExtResource( 3 )
+expand = true
+
+[node name="Control" type="Control" parent="VSplitContainer/spacer"]
+margin_left = 641.0
+margin_right = 1278.0
+margin_bottom = 717.0
+size_flags_horizontal = 3
+
+[node name="ReferenceRect2" type="CenterContainer" parent="VSplitContainer/spacer"]
+margin_left = 1282.0
+margin_top = 597.0
+margin_right = 1920.0
+margin_bottom = 717.0
+rect_min_size = Vector2( 120, 120 )
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="Panel" type="Panel" parent="VSplitContainer/spacer/ReferenceRect2"]
+visible = false
+margin_left = 19.0
+margin_top = -240.0
+margin_right = 619.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 600, 600 )
+
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/spacer/ReferenceRect2/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 5.0
+margin_right = -5.0
+margin_bottom = -5.0
+
+[node name="character_img" type="TextureRect" parent="VSplitContainer/spacer/ReferenceRect2/Panel/MarginContainer"]
+margin_right = 590.0
+margin_bottom = 590.0
+rect_min_size = Vector2( 100, 100 )
+texture = ExtResource( 3 )
+expand = true
+
+[node name="backdrop" type="Panel" parent="VSplitContainer"]
+margin_top = 721.0
+margin_right = 1920.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/backdrop"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 3.0
+
+[node name="CenterContainer" type="CenterContainer" parent="VSplitContainer/backdrop/VBoxContainer"]
+margin_right = 1920.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+
+[node name="Panel" type="Panel" parent="VSplitContainer/backdrop/VBoxContainer/CenterContainer"]
+margin_left = 660.0
+margin_right = 1260.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 600, 20 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="name_label" type="Label" parent="VSplitContainer/backdrop/VBoxContainer/CenterContainer/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "J"
+align = 1
+valign = 1
+
+[node name="HSplitContainer" type="HBoxContainer" parent="VSplitContainer/backdrop/VBoxContainer"]
+margin_top = 24.0
+margin_right = 1920.0
+margin_bottom = 242.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="CenterContainer" type="CenterContainer" parent="VSplitContainer/backdrop/VBoxContainer/HSplitContainer"]
+margin_right = 1920.0
+margin_bottom = 218.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VSplitContainer/backdrop/VBoxContainer/HSplitContainer/CenterContainer"]
+margin_left = 585.0
+margin_top = 69.0
+margin_right = 1335.0
+margin_bottom = 149.0
+rect_min_size = Vector2( 750, 80 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere ac ut consequat semper viverra nam. Orci phasellus egestas tellus rutrum tellus. Hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Massa tincidunt nunc pulvinar sapien et ligula ullamcorper. Sit amet nulla facilisi morbi. Viverra tellus in hac habitasse. Pellentesque diam volutpat commodo sed egestas egestas fringilla. Molestie a iaculis at erat pellentesque adipiscing. Risus ultricies tristique nulla aliquet enim. Dictum varius duis at consectetur lorem donec. Velit sed ullamcorper morbi tincidunt ornare massa. Congue mauris rhoncus aenean vel elit. Etiam non quam lacus suspendisse faucibus interdum posuere. Amet porttitor eget dolor morbi non arcu risus. Pulvinar proin gravida hendrerit lectus a."
+scroll_active = false
+
+[node name="interactions" type="CenterContainer" parent="VSplitContainer/backdrop/VBoxContainer"]
+margin_top = 246.0
+margin_right = 1920.0
+margin_bottom = 356.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/backdrop/VBoxContainer/interactions"]
+margin_left = 660.0
+margin_top = 45.0
+margin_right = 1260.0
+margin_bottom = 65.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="VSplitContainer/backdrop/VBoxContainer/interactions/VBoxContainer"]
+margin_right = 600.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 600, 0 )
+text = "continue"
+
+[connection signal="pressed" from="VSplitContainer/backdrop/VBoxContainer/interactions/VBoxContainer/Button" to="." method="_on_Button_pressed"]

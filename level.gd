@@ -16,7 +16,7 @@ func _on_Timer_timeout():
 	add_child(instance)
 	
 	#if left
-	print(instance.motion)
+#	print(instance.motion)
 	var x_spawn = 0
 	var y_spawn = 0
 	randomize()

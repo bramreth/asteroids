@@ -1,6 +1,7 @@
 extends Node2D
 
 var shot = preload("res://shot.tscn")
+var dialog = preload("res://dialog.tscn")
 var spin = 0
 var v = 0.0
 var acc = 0.15
@@ -13,10 +14,24 @@ var drag = 0.9
 
 var cooldown = 0
 
+var in_menu = false
+
 func _ready():
 	game_manager.connect("val_changed", self, "update_data")
 	game_manager.connect("damage", self, "screen_shake")
 	game_manager.connect("level_up", self, "level_up")
+	
+	dialog()
+	
+func dialog():
+	if not in_menu:
+		in_menu = true
+		var instance = dialog.instance()
+		$player/Camera2D/CanvasLayer.add_child(instance)
+		instance.connect("exit_dialog", self, "exit_dialog")
+	
+func exit_dialog():
+	in_menu = false
 	
 func update_data():
 	$player/Camera2D/CanvasLayer/Control.update()
@@ -64,6 +79,12 @@ func _process(delta):
 			fire_automatic()
 	elif Input.is_action_just_pressed("shoot"):
 		fire_weapon()
+		
+	if Input.is_action_just_pressed("view_ship"):
+		dialog()
+		
+	if Input.is_action_just_pressed("start"):
+		get_tree().quit()
 
 func interp_path():
 	var path = Vector2()
@@ -78,12 +99,16 @@ func interp_path():
 #		else:
 #			rotate_right()
 			
-		var direction = cos($player.rotation)*sin(path.angle()) - cos(path.angle())*sin($player.rotation);
-		print(direction)
+		var direction = cos($player.rotation)*sin(path.angle()) - cos(path.angle())*sin($player.rotation)
+		var a1 = rad2deg($player.rotation)
+		var a2 = rad2deg(path.angle())
+		var dist = abs(a1 - a2)
+		dist = min(360-dist, dist)
+		dist /= 180
 		if(direction > 0.0):
-			rotate_right(direction)
+			rotate_right(dist)#a2)
 		else:
-			rotate_left(direction)
+			rotate_left(dist)#a2)
 #		if $player.get_angle_to(path) > 0:
 #			rotate_left()
 #		if $player.get_angle_to(path) < 0:
@@ -101,16 +126,30 @@ func interp_path():
 
 
 func thrust():
+	var path = Vector2()
+	#var size = max(Input.get_action_strength("joy_right"), max(Input.get_action_strength("joy_left"), max(Input.get_action_strength("joy_down"), Input.get_action_strength("joy_up"))))
+	path.x = Input.get_action_strength("joy_right") - Input.get_action_strength("joy_left")
+	path.y = Input.get_action_strength("joy_down") - Input.get_action_strength("joy_up")
+	path = path.clamped(1)
+#	var joystickstrength = sqrt(pow(abs(path.y),2) + pow(abs(path.x),2))
+#	print(joystickstrength, "marker")
+	var mg = abs(path.x) + abs(path.y)
+	print(abs(path.x) + abs(path.y))
 	if v < max_v:
-		v += acc
+		v += acc * mg
 
 func rotate_left(mag):
 	if abs(spin) < max_r:
-		spin -= r_acc*abs(mag)
-		
+		if mag < 0.15:
+			spin -= r_acc*abs(mag)
+		else:
+			spin -= r_acc
 func rotate_right(mag):
 	if abs(spin) < max_r:
-		spin += r_acc*abs(mag)
+		if mag < 0.15:
+			spin += r_acc*abs(mag)
+		else:
+			spin += r_acc
 		
 func fire_weapon():
 	var instance = shot.instance()

@@ -55,6 +55,7 @@ text = "fire rate: 0"
 align = 1
 
 [node name="update_data" type="Label" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -70,6 +71,7 @@ align = 1
 uppercase = true
 
 [node name="top_border" type="TextureRect" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -84,6 +86,7 @@ texture = ExtResource( 4 )
 expand = true
 
 [node name="bottom_border" type="TextureRect" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
