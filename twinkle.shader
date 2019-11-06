@@ -16,6 +16,9 @@ void fragment(){
 	if(COLOR.r + normal.r >  0.8){
 		COLOR = starColor * (1.0 - (starSpeed+1.0)*starVariance*0.5);
 	}
+	if(COLOR.r == 0.0){
+		COLOR.a = 0.0;	
+	}
 }
 
 void light(){

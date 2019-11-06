@@ -1,9 +1,42 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://level.gd" type="Script" id=1]
-[ext_resource path="res://twinkle.shader" type="Shader" id=2]
-[ext_resource path="res://stars.png" type="Texture" id=3]
-[ext_resource path="res://player.tscn" type="PackedScene" id=4]
+[ext_resource path="res://starfield_2.png" type="Texture" id=2]
+[ext_resource path="res://star_material.tres" type="Material" id=3]
+[ext_resource path="res://stars.png" type="Texture" id=4]
+[ext_resource path="res://player.tscn" type="PackedScene" id=5]
+
+[sub_resource type="Shader" id=3]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise;
+
+void fragment(){
+	vec4 starColor = vec4(1.0,1.0,1.0,1.0);
+	float starSpeed = 5.0;
+	float starVariance = 1.0;
+	vec2 newUV = UV;
+	newUV.x += sin(TIME*0.005);
+	newUV.y += cos(TIME*0.005);
+	vec4 normal = texture(noise, newUV);
+	COLOR = normal;
+	COLOR = texture(TEXTURE, UV);
+	
+	if(COLOR.r + normal.r >  0.70){
+		COLOR = starColor * (1.0 - (starSpeed+1.0)*starVariance*0.5);
+	}
+//	if(COLOR.r == 0.0){
+//		COLOR.a = 0.0;	
+//	}
+}
+
+void light(){
+	vec4 c = texture(TEXTURE, UV);
+	
+	if(c.r >  0.2){
+		LIGHT = c;
+	}
+}"
 
 [sub_resource type="OpenSimplexNoise" id=1]
 octaves = 4
@@ -14,18 +47,30 @@ lacunarity = 4.0
 seamless = true
 noise = SubResource( 1 )
 
-[sub_resource type="ShaderMaterial" id=3]
-shader = ExtResource( 2 )
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
 shader_param/noise = SubResource( 2 )
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="Sprite" type="Sprite" parent="."]
-material = SubResource( 3 )
-texture = ExtResource( 3 )
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
-[node name="Node2D" parent="." instance=ExtResource( 4 )]
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.3, 0.3 )
+
+[node name="Sprite2" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+material = SubResource( 4 )
+texture = ExtResource( 2 )
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.35, 0.35 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer2"]
+material = ExtResource( 3 )
+texture = ExtResource( 4 )
+
+[node name="Node2D" parent="." instance=ExtResource( 5 )]
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5
