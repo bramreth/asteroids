@@ -1,9 +1,14 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://controls.gd" type="Script" id=1]
-[ext_resource path="res://p1.png" type="Texture" id=2]
-[ext_resource path="res://ui.tscn" type="PackedScene" id=3]
-[ext_resource path="res://shake.tres" type="Animation" id=4]
+[ext_resource path="res://trail.tscn" type="PackedScene" id=2]
+[ext_resource path="res://p1.png" type="Texture" id=3]
+[ext_resource path="res://ui.tscn" type="PackedScene" id=4]
+[ext_resource path="res://shake.tres" type="Animation" id=5]
+
+[sub_resource type="Gradient" id=1]
+offsets = PoolRealArray( 0.0107527, 1 )
+colors = PoolColorArray( 0, 0, 0, 0, 0.609375, 0.926758, 1, 1 )
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 1 )
@@ -12,17 +17,25 @@ script = ExtResource( 1 )
 position = Vector2( 5, 0 )
 collision_layer = 2
 
+[node name="trail" parent="player" instance=ExtResource( 2 )]
+width = 20.0
+default_color = Color( 1, 1, 1, 1 )
+gradient = SubResource( 1 )
+joint_mode = 2
+origin = NodePath("..")
+trail_length = 25
+
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="player"]
 polygon = PoolVector2Array( -24.8242, -18.744, -24.8242, 18.7274, 25.1157, -0.0742874 )
 
 [node name="Sprite" type="Sprite" parent="player"]
 scale = Vector2( 0.25, 0.25 )
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
 
 [node name="Camera2D" type="Camera2D" parent="player"]
 position = Vector2( -5, 0 )
 current = true
-zoom = Vector2( 0.25, 0.25 )
+zoom = Vector2( 0.5, 0.5 )
 limit_left = -500
 limit_top = -500
 limit_right = 500
@@ -30,7 +43,7 @@ limit_bottom = 500
 
 [node name="CanvasLayer" type="CanvasLayer" parent="player/Camera2D"]
 
-[node name="Control" parent="player/Camera2D/CanvasLayer" instance=ExtResource( 3 )]
+[node name="Control" parent="player/Camera2D/CanvasLayer" instance=ExtResource( 4 )]
 
 [node name="damage_filter" type="ColorRect" parent="player/Camera2D/CanvasLayer"]
 modulate = Color( 1, 0, 0, 0 )
@@ -38,7 +51,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="screen_shake_player" type="AnimationPlayer" parent="player/Camera2D"]
-anims/shake = ExtResource( 4 )
+anims/shake = ExtResource( 5 )
 
 [node name="weapon" type="Node2D" parent="player"]
 position = Vector2( 27.5, 0 )
