@@ -8,36 +8,46 @@
 code = "shader_type canvas_item;
 
 uniform sampler2D noise;
+uniform sampler2D noise2;
 
 void fragment(){
 	vec4 starColor = vec4(1.0,1.0,1.0,1.0);
 	float starSpeed = 5.0;
 	float starVariance = 1.0;
 	vec2 newUV = UV;
-	newUV.x += sin(TIME*0.005);
-	newUV.y += cos(TIME*0.005);
+	newUV.x += sin(TIME*0.002);
+	newUV.y += cos(TIME*0.002);
 	vec4 normal = texture(noise, newUV);
 	COLOR = normal;
 	COLOR = texture(TEXTURE, UV);
 	
-	if(COLOR.r + normal.r >  0.70){
+	if(COLOR.r + normal.r >  0.75){
 		COLOR = starColor * (1.0 - (starSpeed+1.0)*starVariance*0.5);
+	}else{
+	//	else if(COLOR.r + normal.r >  0.65){
+	//		COLOR = vec4(0.2,0.2,1.0,0.2);
+	//	}
+		vec2 newUV2 = UV;
+		newUV2.x -= sin(TIME*0.005);
+		newUV2.y -= cos(TIME*0.005);
+		vec4 normal_2 = texture(noise2, newUV2);
+		if(normal_2.r + normal.r < 0.75){
+			COLOR.g = (0.75 - (normal.r + normal_2.r)) * 0.8;
+			COLOR.b = (0.75 - (normal.r + normal_2.r));
+		}
+		if(normal_2.r + normal.r > 1.25){
+			COLOR.r = ((normal.r + normal_2.r) - 1.25) * 0.8;
+			COLOR.b = ((normal.r + normal_2.r) - 1.25);
+		}
+	//	if(COLOR.r == 0.0){
+	//		COLOR.a = 0.0;	
 	}
-//	if(COLOR.r == 0.0){
-//		COLOR.a = 0.0;	
-//	}
-}
-
-void light(){
-	vec4 c = texture(TEXTURE, UV);
-	
-	if(c.r >  0.2){
-		LIGHT = c;
-	}
+		
+		COLOR.r += 0.02;
+		COLOR.b += 0.035;
 }"
 
 [sub_resource type="OpenSimplexNoise" id=2]
-octaves = 4
 persistence = 1.0
 lacunarity = 4.0
 
@@ -45,9 +55,19 @@ lacunarity = 4.0
 seamless = true
 noise = SubResource( 2 )
 
+[sub_resource type="OpenSimplexNoise" id=13]
+octaves = 6
+persistence = 0.25
+lacunarity = 4.0
+
+[sub_resource type="NoiseTexture" id=14]
+seamless = true
+noise = SubResource( 13 )
+
 [sub_resource type="ShaderMaterial" id=4]
 shader = SubResource( 1 )
 shader_param/noise = SubResource( 3 )
+shader_param/noise2 = SubResource( 14 )
 
 [sub_resource type="Shader" id=5]
 code = "shader_type canvas_item;
@@ -84,12 +104,15 @@ void fragment(){
 //	COLOR = normal;
 //	COLOR = texture(TEXTURE, UV);
 	if(COLOR.a >=0.01){
-		if(COLOR.a + normal.r >  0.5){
+		if(COLOR.a + normal.r >  0.6){
 			COLOR = starColor * (1.0 - (starSpeed+1.0)*starVariance*0.5);
-		}
-		if(COLOR.r == 0.0){
+		}else{
 			COLOR.a = 0.0;	
 		}
+		
+//		if(COLOR.r == 0.0){
+//			COLOR.a = 0.0;	
+//		}
 	}
 }
 "
@@ -126,16 +149,6 @@ width = 1000
 height = 1000
 noise = SubResource( 11 )
 
-[sub_resource type="OpenSimplexNoise" id=13]
-seed = 5
-octaves = 4
-persistence = 1.0
-
-[sub_resource type="NoiseTexture" id=14]
-width = 1000
-height = 1000
-noise = SubResource( 13 )
-
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 1 )
 
@@ -144,30 +157,23 @@ script = ExtResource( 1 )
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
 motion_scale = Vector2( 0.1, 0.1 )
 
-[node name="Sprite2" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+[node name="backdrop" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
 material = SubResource( 4 )
 texture = ExtResource( 2 )
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.15, 0.15 )
+
+[node name="star_layer_1" type="Sprite" parent="ParallaxBackground/ParallaxLayer2"]
+material = SubResource( 8 )
+texture = SubResource( 10 )
 
 [node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
 motion_scale = Vector2( 0.2, 0.2 )
 
-[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer3"]
-material = SubResource( 8 )
-texture = SubResource( 10 )
-
-[node name="ParallaxLayer6" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2( 0.3, 0.3 )
-
-[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer6"]
+[node name="star_layer_2" type="Sprite" parent="ParallaxBackground/ParallaxLayer3"]
 material = SubResource( 8 )
 texture = SubResource( 12 )
-
-[node name="ParallaxLayer5" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2( 0.4, 0.4 )
-
-[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer5"]
-material = SubResource( 8 )
-texture = SubResource( 14 )
 
 [node name="Node2D" parent="." instance=ExtResource( 3 )]
 
