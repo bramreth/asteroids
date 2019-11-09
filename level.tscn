@@ -1,12 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://level.gd" type="Script" id=1]
 [ext_resource path="res://starfield_2.png" type="Texture" id=2]
-[ext_resource path="res://star_material.tres" type="Material" id=3]
-[ext_resource path="res://stars.png" type="Texture" id=4]
-[ext_resource path="res://player.tscn" type="PackedScene" id=5]
+[ext_resource path="res://player.tscn" type="PackedScene" id=3]
 
-[sub_resource type="Shader" id=3]
+[sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
 
 uniform sampler2D noise;
@@ -38,18 +36,105 @@ void light(){
 	}
 }"
 
-[sub_resource type="OpenSimplexNoise" id=1]
+[sub_resource type="OpenSimplexNoise" id=2]
 octaves = 4
 persistence = 1.0
 lacunarity = 4.0
 
-[sub_resource type="NoiseTexture" id=2]
+[sub_resource type="NoiseTexture" id=3]
 seamless = true
-noise = SubResource( 1 )
+noise = SubResource( 2 )
 
 [sub_resource type="ShaderMaterial" id=4]
-shader = SubResource( 3 )
-shader_param/noise = SubResource( 2 )
+shader = SubResource( 1 )
+shader_param/noise = SubResource( 3 )
+
+[sub_resource type="Shader" id=5]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise;
+
+void fragment(){
+	COLOR = texture(TEXTURE, UV);
+//	COLOR.r = 1.0;
+//	if(COLOR.r < 0.75){
+//		COLOR.a = 0.0;
+//	}else if(COLOR.r < 0.8){
+//		COLOR.a = 0.2;
+//	}else{
+//		COLOR = vec4(1.0,1.0,1.0,1.0)	
+//	}
+	if(COLOR.r < 0.76){
+		COLOR.a = 0.0;
+	}else{
+		float fade = ((COLOR.r -0.76)/0.24);
+		COLOR = vec4(1.0,1.0,1.0,1.0);
+		COLOR.a = fade;
+		
+	}
+
+	
+	vec4 starColor = vec4(1.0,1.0,1.0,1.0);
+	float starSpeed = 5.0;
+	float starVariance = 1.0;
+	vec2 newUV = UV;
+	newUV.x += sin(TIME*0.05);
+	newUV.y += cos(TIME*0.05);
+	vec4 normal = texture(noise, newUV);
+//	COLOR = normal;
+//	COLOR = texture(TEXTURE, UV);
+	if(COLOR.a >=0.01){
+		if(COLOR.a + normal.r >  0.5){
+			COLOR = starColor * (1.0 - (starSpeed+1.0)*starVariance*0.5);
+		}
+		if(COLOR.r == 0.0){
+			COLOR.a = 0.0;	
+		}
+	}
+}
+"
+
+[sub_resource type="OpenSimplexNoise" id=6]
+seed = -1
+
+[sub_resource type="NoiseTexture" id=7]
+width = 1000
+height = 1000
+noise = SubResource( 6 )
+
+[sub_resource type="ShaderMaterial" id=8]
+shader = SubResource( 5 )
+shader_param/noise = SubResource( 7 )
+
+[sub_resource type="OpenSimplexNoise" id=9]
+seed = 1
+octaves = 4
+persistence = 1.0
+
+[sub_resource type="NoiseTexture" id=10]
+width = 1000
+height = 1000
+noise = SubResource( 9 )
+
+[sub_resource type="OpenSimplexNoise" id=11]
+seed = 3
+octaves = 4
+persistence = 1.0
+
+[sub_resource type="NoiseTexture" id=12]
+width = 1000
+height = 1000
+noise = SubResource( 11 )
+
+[sub_resource type="OpenSimplexNoise" id=13]
+seed = 5
+octaves = 4
+persistence = 1.0
+
+[sub_resource type="NoiseTexture" id=14]
+width = 1000
+height = 1000
+noise = SubResource( 13 )
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 1 )
@@ -57,20 +142,34 @@ script = ExtResource( 1 )
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2( 0.3, 0.3 )
+motion_scale = Vector2( 0.1, 0.1 )
 
 [node name="Sprite2" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
 material = SubResource( 4 )
 texture = ExtResource( 2 )
 
-[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2( 0.35, 0.35 )
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.2, 0.2 )
 
-[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer2"]
-material = ExtResource( 3 )
-texture = ExtResource( 4 )
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer3"]
+material = SubResource( 8 )
+texture = SubResource( 10 )
 
-[node name="Node2D" parent="." instance=ExtResource( 5 )]
+[node name="ParallaxLayer6" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.3, 0.3 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer6"]
+material = SubResource( 8 )
+texture = SubResource( 12 )
+
+[node name="ParallaxLayer5" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2( 0.4, 0.4 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer5"]
+material = SubResource( 8 )
+texture = SubResource( 14 )
+
+[node name="Node2D" parent="." instance=ExtResource( 3 )]
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.5
