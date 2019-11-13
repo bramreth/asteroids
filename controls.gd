@@ -8,11 +8,13 @@ var acc = 0.15
 var velocity = Vector2(0, 0)
 var speed = 200
 var max_v = 5.0
-var r_acc = 0.01
-var max_r = 0.2
+var r_acc = 0.035
+var max_r = 0.08
 var drag = 0.9
 
 var cooldown = 0
+
+export var DEBUG = true
 
 var in_menu = false
 
@@ -58,6 +60,7 @@ func _process(delta):
 	if Input.is_action_pressed("joy_down") or Input.is_action_pressed("joy_up") or Input.is_action_pressed("joy_left") or Input.is_action_pressed("joy_right"):
 		if not Input.is_action_pressed("brake"):
 			thrust()
+			
 	spin *= drag
 		
 	$player.rotate(spin)
@@ -85,6 +88,20 @@ func _process(delta):
 		
 	if Input.is_action_just_pressed("start"):
 		get_tree().quit()
+		
+	"""
+	this value needs smoothing over an ammount of time say the avg speed over a half second buffer.
+	then to be interpolated to stages according to that average speed.
+	"""
+#	if v < 2.0:
+#		$player/Camera2D.zoom.x = 0.65 - (v/40.0)
+#		$player/Camera2D.zoom.y = 0.65 - (v/40.0)
+#	else:
+#		$player/Camera2D.zoom.x = 0.65 - 0.1
+#		$player/Camera2D.zoom.y = 0.65 - 0.1
+		
+	
+#	print(spin)
 
 func interp_path():
 	var path = Vector2()
@@ -92,6 +109,9 @@ func interp_path():
 	path.x = Input.get_action_strength("joy_right") - Input.get_action_strength("joy_left")
 	path.y = Input.get_action_strength("joy_down") - Input.get_action_strength("joy_up")
 	#path = path.normalized()
+	if DEBUG:
+		$player/path.points[1] = path * 100
+		$player/path.global_rotation = 0
 	if path:
 #		$player.rotation = path.angle()
 #		if $player.rotation - path.angle() > 0:
@@ -105,6 +125,10 @@ func interp_path():
 		var dist = abs(a1 - a2)
 		dist = min(360-dist, dist)
 		dist /= 180
+		print(dist)
+		if dist < 0.1:
+			dist = 0.1
+		
 		if(direction > 0.0):
 			rotate_right(dist)#a2)
 		else:
@@ -130,6 +154,7 @@ func thrust():
 	#var size = max(Input.get_action_strength("joy_right"), max(Input.get_action_strength("joy_left"), max(Input.get_action_strength("joy_down"), Input.get_action_strength("joy_up"))))
 	path.x = Input.get_action_strength("joy_right") - Input.get_action_strength("joy_left")
 	path.y = Input.get_action_strength("joy_down") - Input.get_action_strength("joy_up")
+	
 	path = path.clamped(1)
 #	var joystickstrength = sqrt(pow(abs(path.y),2) + pow(abs(path.x),2))
 #	print(joystickstrength, "marker")
@@ -137,6 +162,7 @@ func thrust():
 	print(abs(path.x) + abs(path.y))
 	if v < max_v:
 		v += acc * mg
+	
 
 func rotate_left(mag):
 	if abs(spin) < max_r:
@@ -144,12 +170,17 @@ func rotate_left(mag):
 			spin -= r_acc*abs(mag)
 		else:
 			spin -= r_acc
+		if DEBUG:
+			$player/path2.points[1] = Vector2(0, spin*1000) 
+			
 func rotate_right(mag):
 	if abs(spin) < max_r:
 		if mag < 0.15:
 			spin += r_acc*abs(mag)
 		else:
 			spin += r_acc
+		if DEBUG:
+			$player/path2.points[1] = Vector2(0, spin*1000) 
 		
 func fire_weapon():
 	var instance = shot.instance()
