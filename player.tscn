@@ -35,6 +35,7 @@ scale = Vector2( 0.25, 0.25 )
 texture = ExtResource( 3 )
 
 [node name="Camera2D" type="Camera2D" parent="player"]
+editor/display_folded = true
 position = Vector2( -5, 0 )
 current = true
 zoom = Vector2( 0.5, 0.5 )
@@ -47,10 +48,23 @@ limit_bottom = 500
 
 [node name="Control" parent="player/Camera2D/CanvasLayer" instance=ExtResource( 4 )]
 
+[node name="update_data" parent="player/Camera2D/CanvasLayer/Control" index="1"]
+mouse_filter = 0
+
+[node name="VBoxContainer2" parent="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer" index="1"]
+mouse_filter = 0
+
+[node name="speed" parent="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer/VBoxContainer2" index="0"]
+hint_tooltip = "HELP\""
+
+[node name="drag" parent="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer/VBoxContainer2" index="2"]
+ticks_on_borders = true
+
 [node name="damage_filter" type="ColorRect" parent="player/Camera2D/CanvasLayer"]
 modulate = Color( 1, 0, 0, 0 )
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 
 [node name="screen_shake_player" type="AnimationPlayer" parent="player/Camera2D"]
 anims/shake = ExtResource( 5 )
@@ -66,11 +80,19 @@ anims/leave_ftl = ExtResource( 7 )
 points = PoolVector2Array( 0, 0, 0, 0 )
 width = 2.0
 default_color = Color( 1, 0.4, 0.4, 1 )
-texture_mode = 1616510976
+texture_mode = 787168176
 
 [node name="path2" type="Line2D" parent="player"]
 points = PoolVector2Array( 0, 0, 0, 0 )
 width = 2.0
 default_color = Color( 0.4, 1, 0.466667, 1 )
-texture_mode = 1616510976
+texture_mode = 787641632
 
+[connection signal="value_changed" from="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer/VBoxContainer2/speed" to="." method="_on_speed_value_changed"]
+[connection signal="value_changed" from="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer/VBoxContainer2/acc" to="." method="_on_acc_value_changed"]
+[connection signal="value_changed" from="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer/VBoxContainer2/drag" to="." method="_on_drag_value_changed"]
+[connection signal="value_changed" from="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer/VBoxContainer2/max_v" to="." method="_on_max_v_value_changed"]
+[connection signal="value_changed" from="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer/VBoxContainer2/max_r" to="." method="_on_max_r_value_changed"]
+[connection signal="value_changed" from="player/Camera2D/CanvasLayer/Control/Panel/HBoxContainer/VBoxContainer2/r_acc" to="." method="_on_r_acc_value_changed"]
+
+[editable path="player/Camera2D/CanvasLayer/Control"]

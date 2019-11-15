@@ -24,6 +24,8 @@ func _ready():
 	game_manager.connect("level_up", self, "level_up")
 	
 	dialog()
+
+	
 	
 func dialog():
 	if not in_menu:
@@ -207,3 +209,38 @@ func set_limit(left, top, bottom, right):
 	
 func screen_shake():
 	$player/Camera2D/screen_shake_player.play("shake")
+
+func _on_speed_value_changed(value):
+	if DEBUG:
+		speed = value
+		print("speed: ",value)
+
+
+func _on_acc_value_changed(value):
+	if DEBUG:
+		acc = value
+		print("acc: ",value)
+
+
+func _on_drag_value_changed(value):
+	if DEBUG:
+		drag = value
+		print("drag: ",value)
+
+
+func _on_max_v_value_changed(value):
+	if DEBUG:
+		max_v = value
+		print("max v: ",value)
+
+
+func _on_max_r_value_changed(value):
+	if DEBUG:
+		max_r = value
+		print("max r: ",value)
+
+
+func _on_r_acc_value_changed(value):
+	if DEBUG:
+		r_acc = value
+		print("r acc: ",value)
